@@ -70,10 +70,12 @@ Dans une invite de commandes, taper la commande :
 ```bash
 npm i -g @nestjs/cli
 ```
-Le numéro de version doit apparaître. Par exemple :
-```bash
-11.1.0
-```
+
+## Installation d'un client REST
+
+Afin de tester son API REST en cours de développement, il est nécessaire d'installer un logiciel de type **[Bruno](https://www.usebruno.com/)**, [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/).
+
+Pour la suite du tuto, je me baserai sur `Bruno` qui permet de versionner ses collections et ainsi de les partager entre collègues. Bruno permet aussi d'intégrer ses collections au sein des projets en cours de développement.
 
 ## Création du projet
 
@@ -88,4 +90,22 @@ Taper la commande suivante pour lancer le test :
 ```bash
 npm run start:dev
 ```
+
+Ouvrir un logiciel `Bruno` et créer une collection. 
+
+Lui donner un nom et en `location` créer un dossier `bruno` à la racine de son projet.
+
+Dans la collection nouvellement créée, ajouter une `new request` de type `HTTP`.
+
+La nommer `Hello World` et lui donner comme url `http://localhost:3000`. Le port d'écoute par défaut du projet est le port `3000`. C'est vérifiable dans le fichier `main.ts` :
+```ts
+await app.listen(process.env.PORT ?? 3000);
+```
+Exécuter la requête dans `bruno`.
+
+La réponse devrait être `Hello World!`.
+
+## Nettoyage du code
+
+Dans la console de VSCode, arrêter le test en cours avec `Ctrl+C`.
 

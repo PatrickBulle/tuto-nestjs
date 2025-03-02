@@ -1,99 +1,653 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Tutoriel node.js avec le framework nest.js
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Version
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+|    Date    | Version | Auteur     | Commentaire               |
+| :--------: | ------: | :--------- | :------------------------ |
+| 28/02/2024 |     0.1 | Patrick B. | Initilisation du document |
+| 02/03/2024 |     0.1 | Patrick B. | Création du projet        |
 
-## Description
+## Pourquoi utiliser ce framework dans le cadre d'un développement back
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+D'après Copilot, pour un projet Node.js utilisant TypeScript, avec injection de dépendance, ORM, OpenAPI et basé sur la clean architecture, je recommande le framework NestJS. Voici pourquoi :
 
-## Project setup
+1. TypeScript : NestJS est entièrement écrit en TypeScript et offre un excellent support pour ce langage ;
 
-```bash
-$ npm install
-```
+2. Injection de dépendance : NestJS utilise un conteneur d'injection de dépendance intégré, inspiré par Angular, ce qui facilite la gestion des dépendances ;
 
-## Compile and run the project
+3. ORM : Vous pouvez utiliser TypeORM ou Prisma avec NestJS pour la gestion des bases de données ;
 
-```bash
-# development
-$ npm run start
+4. OpenAPI : NestJS supporte la génération de documentation OpenAPI (Swagger) via des décorateurs et des modules intégrés ;
 
-# watch mode
-$ npm run start:dev
+5. Clean Architecture : NestJS encourage une architecture modulaire et propre, facilitant la maintenance et l'évolutivité de votre application.
 
-# production mode
-$ npm run start:prod
-```
+Toujours d'après Copilot, les retours des développeurs sur NestJS sont généralement très positifs. Voici quelques points clés qui ressortent souvent :
 
-## Run tests
+1. Clean architecture modulaire : Les développeurs apprécient l'architecture modulaire de NestJS, qui facilite la configuration et la mise à l'échelle des applications. Cela permet de diviser le code en modules réutilisables, ce qui est particulièrement utile pour les grandes applications1.
 
-```bash
-# unit tests
-$ npm run test
+2. Support TypeScript : NestJS est conçu pour fonctionner nativement avec TypeScript, ce qui est un grand avantage pour les développeurs qui préfèrent ce langage. Cela permet une meilleure sécurité de type et des vérifications à la compilation2.
 
-# e2e tests
-$ npm run test:e2e
+3. Injection de dépendances : Le système d'injection de dépendances de NestJS est souvent comparé à celui d'Angular, ce qui le rend familier et facile à utiliser pour les développeurs ayant une expérience avec Angular2.
 
-# test coverage
-$ npm run test:cov
-```
+4. Documentation et communauté : La documentation de NestJS est claire, détaillée et bien structurée, ce qui facilite la prise en main du framework. De plus, la communauté est très active, offrant de nombreux exemples et ressources2.
 
-## Deployment
+5. Performance et scalabilité : Les développeurs trouvent que NestJS offre de bonnes performances et est facilement scalable, ce qui est crucial pour les applications modernes1.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+6. Intégration avec d'autres outils : NestJS s'intègre bien avec d'autres outils et bibliothèques populaires, comme TypeORM, Prisma, et Swagger, ce qui simplifie le développement et la documentation des API2.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Cependant, certains développeurs notent que la courbe d'apprentissage peut être un peu raide pour ceux qui ne sont pas familiers avec TypeScript ou les concepts d'injection de dépendances3.
+
+En résumé, NestJS est largement apprécié pour sa robustesse, sa flexibilité et son support TypeScript, bien que son adoption puisse nécessiter un certain temps d'adaptation pour les nouveaux utilisateurs.
+
+## Installation de node.js
+
+Se rendre sur le site de [node.js](https://nodejs.org/en/download) et installer la dernière version LTS (_Long Term Support_) correspondant à votre système d'exploitation.
+
+### Vérification de l'installation de node.js
+
+Ouvrir une invite de commandes et taper la commande :
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+node -v
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Le numéro de version doit apparaître. Par exemple :
 
-## Resources
+```bash
+v22.14.0
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### Vérification de l'installation de npm
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Toujours dans une invite de commandes, taper la commande :
 
-## Support
+```bash
+npm -v
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Le numéro de version doit apparaître. Par exemple :
 
-## Stay in touch
+```bash
+11.1.0
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Installation du framework nest.js
 
-## License
+Dans une invite de commandes, taper la commande :
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+npm i -g @nestjs/cli
+```
+
+## Installation d'un client REST
+
+Afin de tester son API REST en cours de développement, il est nécessaire d'installer un logiciel de type **[Bruno](https://www.usebruno.com/)**, [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/).
+
+Pour la suite du tuto, je me baserai sur `Bruno` qui permet de versionner ses collections et ainsi de les partager entre collègues. Bruno permet aussi d'intégrer ses collections au sein des projets en cours de développement.
+
+## Création du projet
+
+Se positionner à la racine de son workspace et taper la commande :
+
+```bash
+nest new nomDuProjet
+```
+
+Ouvrir Visual Studio Code sur le dossier du projet et ouvrir une console dans celui-ci.
+
+Taper la commande suivante pour lancer le test :
+
+```bash
+npm run start:dev
+```
+
+Ouvrir un logiciel `Bruno` et créer une collection.
+
+Lui donner un nom et en `location` créer un dossier `bruno` à la racine de son projet.
+
+Dans la collection nouvellement créée, ajouter une `new request` de type `HTTP`.
+
+La nommer `Hello World` et lui donner comme url `http://localhost:3000`. Le port d'écoute par défaut du projet est le port `3000`. C'est vérifiable dans le fichier `main.ts` :
+
+```ts
+await app.listen(process.env.PORT ?? 3000);
+```
+
+Exécuter la requête dans `bruno`.
+
+La réponse devrait être `Hello World!`.
+
+### Nettoyage du code
+
+Dans la console de VSCode, arrêter le test en cours avec `Ctrl+C`.
+
+Supprimer les fichiers `src/app.controller.spec.ts`, `src/app.controller.ts`, `scr/app.service.ts`.
+
+Editer le fichier `app.module.ts` et supprimer toutes les références à `AppController` et `AppService` :
+
+```ts
+import { Module } from '@nestjs/common';
+
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+```
+
+Enregistrer le fichier app.module.ts.
+
+### Création du premier _module_
+
+Un [module](https://docs.nestjs.com/modules) est une classe annotée avec le décorateur `@Module()`. Ce décoreur fournit au framework `nest.js` des informations permettant d'organiser et gérer de manière architecturée le code source de l'application.
+
+Dans la console de VSCode, nous allons créer un premier module pour gérer les bovins par exemple :
+
+```bash
+nest generate module bovin
+```
+
+Un dossier `bovin` a été créé à l'intérieur du dossier `src`.
+
+Le dossier `scr/bovin`contient un nouveau fichier module nommé `bovin.module.ts`.
+
+Finalement, la commande `generate` a aussi enregistrer le nouveau module dans le fichier app.module :
+
+```ts
+import { Module } from '@nestjs/common';
+import { BovinModule } from './bovin/bovin.module';
+
+@Module({
+  imports: [BovinModule],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+```
+
+### Création du contrôleur et du service
+
+Le contrôleur permet de gérer les routes.
+Le service héberge le code métier.
+
+Dans la console :
+
+```bash
+nest generate controller bovin --no-spec
+nest generate service bovin --no-spec
+```
+
+Note : `--no-spec`signifie qu'il n'est pas nécessaire de générer les fichiers de tests.
+
+Le framework a créé le contrôleur `bovin.controller.ts` et `bovin.service.ts`.
+
+A remarquer que le contrôleur et le service ont été automatiquement enregistrer dans le fichier module `bovin.module.ts` :
+
+```ts
+import { Module } from '@nestjs/common';
+import { BovinController } from './bovin.controller';
+import { BovinService } from './bovin.service';
+
+@Module({
+  controllers: [BovinController],
+  providers: [BovinService],
+})
+export class BovinModule {}
+```
+
+### Ajout de nos premières routes
+
+Contenu du fichier `bovin.controller.ts :
+
+```ts
+import { Controller } from '@nestjs/common';
+
+@Controller('bovin')
+export class BovinController {}
+```
+
+Le décorateur `@Controller` informe que la classe est un contrôleur, donc va exposer des routes. Il informe aussi que toutes les routes de ce contrôleur auront l'url `http://localhost:3000/bovin`.
+
+Je souhaite que toutes les routes des APIs soient sous la forme `http://localhost:3000/api/v1/...`.
+
+Une première solution serait de modifier le décorateur `@Controller` pour tous les contrôleurs.
+
+Une autre solution plus élégante est de déclarer le préfixe de manière globale.
+
+Ouvrir le fichier `main.ts` et le modifier ainsi :
+
+```ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.setGlobalPrefix('api/v1');
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap().catch((err) => console.error(err));
+```
+
+#### Ajouter une route listant l'ensemble des bovins
+
+Il faut ajouter une route avec le verbe `GET` :
+
+```ts
+import { Controller, Get } from '@nestjs/common';
+import { BovinService } from './bovin.service';
+
+@Controller('bovins')
+export class BovinController {
+  constructor(private readonly bovinService: BovinService) {}
+
+  @Get()
+  getBovins(): Bovin[] {
+    return this.bovinService.getBovins();
+  }
+}
+```
+
+Parmi le code modifié, on a :
+
+- importé la classe de service des bovins ;
+- injecté la classe de service dans le constructeur du contrôleur ;
+- ajouté une méthode `getBovins`avec un décorateur `@Get``
+
+La méthode `getBovins`va retourner un tableau de `Bovin` qui n'existe pas encore en déléguant le chargement des bovins à la méthode `getBovins`de la classe de service. Méthode qui , elle non plus, n'existe pas encore.
+
+#### Création de la classe _Bovin_
+
+Dans le dossier `src`, créer un sous-dossier `entity`.
+
+Dans le dossier `src/entity`, créer un nouveau fichier `bovin.ts` :
+
+```ts
+export enum Sexe {
+  M = 1,
+  F = 2,
+}
+
+export class Bovin {
+  // Code pays
+  private copaip: string;
+  // Numéro national
+  private nunati: string;
+  // Nom
+  private nobovi: string;
+  // Date de naissance
+  private danais: Date;
+  // Sexe
+  private sexbov: Sexe;
+  // Date de création de l'enregistrement
+  private dcre: Date;
+  // Date de mise à jour de l'enregistrement
+  private dmaj: Date;
+
+  constructor(
+    copaip: string | null = null,
+    nunati: string | null = null,
+    nobovi: string | null = null,
+    danais: Date | null = null,
+    sexbov: Sexe | null = null,
+    dcre: Date | null = null,
+    dmaj: Date | null = null,
+  ) {
+    this.init(copaip, nunati, nobovi, danais, sexbov, dcre, dmaj);
+  }
+
+  private init(
+    copaip: string | null = null,
+    nunati: string | null = null,
+    nobovi: string | null = null,
+    danais: Date | null = null,
+    sexbov: Sexe | null = null,
+    dcre: Date | null = null,
+    dmaj: Date | null = null,
+  ): void {
+    this.setCopaip(copaip ?? '');
+    this.setNunati(nunati ?? '');
+    this.setNobovi(nobovi ?? '');
+    this.setDanais(danais ?? new Date());
+    this.setSexbov(sexbov ?? Sexe.F);
+    this.setDcre(dcre ?? new Date());
+    this.setDmaj(dmaj ?? new Date());
+  }
+
+  getCopaip(): string {
+    return this.copaip;
+  }
+
+  getNunati(): string {
+    return this.nunati;
+  }
+
+  getNobovi(): string {
+    return this.nobovi;
+  }
+
+  getDanais(): Date {
+    return this.danais;
+  }
+
+  getSexbov(): Sexe {
+    return this.sexbov;
+  }
+
+  getDcre(): Date {
+    return this.dcre;
+  }
+
+  getDmaj(): Date {
+    return this.dmaj;
+  }
+
+  setCopaip(copaip: string): void {
+    this.copaip = copaip;
+  }
+
+  setNunati(nunati: string): void {
+    this.nunati = nunati;
+  }
+
+  setNobovi(nobovi: string): void {
+    this.nobovi = nobovi;
+  }
+
+  setDanais(danais: Date): void {
+    if (danais > new Date()) {
+      throw new Error(
+        'La date de naissance ne peut pas être supérieure à la date du jour',
+      );
+    }
+    this.danais = danais;
+  }
+
+  setSexbov(sexbov: Sexe): void {
+    this.sexbov = sexbov;
+  }
+
+  setDcre(dcre: Date): void {
+    this.dcre = dcre;
+  }
+
+  setDmaj(dmaj: Date): void {
+    this.dmaj = dmaj;
+  }
+}
+```
+
+A noter que les membres de la classe sont privés afin de gérer au mieux l'**encapsulation** et qu'ils ne sont accessibles qu'à travers les **assesseurs**.
+
+Cela permet de gérer le cas d'usage suivant : un bovin ne peut pas être né à une date postérieure à la date du jour.
+
+Dans le fichier `bovin.service.ts`, ajouter la méthode `getBovins` :
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { Bovin, Sexe } from 'src/entity/bovin';
+
+@Injectable()
+export class BovinService {
+  // Liste de bovins créée en dur
+  private static readonly bovins: Bovin[] = [
+    new Bovin(
+      'FR',
+      '2512345678',
+      'Marguerite',
+      new Date('2019-01-01'),
+      Sexe.F,
+      new Date('2019-01-02'),
+      new Date('2019-01-02T12:34:56'),
+    ),
+    new Bovin(
+      'FR',
+      '2598765432',
+      'Gustave',
+      new Date('2020-01-01'),
+      Sexe.M,
+      new Date('2020-01-02'),
+      new Date('2020-01-02T12:34:56'),
+    ),
+    new Bovin(
+      'FR',
+      '2567890123',
+      'Blanchette',
+      new Date('2021-01-01'),
+      Sexe.F,
+      new Date('2021-01-02'),
+      new Date('2021-01-02T12:34:56'),
+    ),
+  ];
+
+  getBovins(): Bovin[] {
+    return BovinService.bovins;
+  }
+}
+```
+
+#### Test de la ressource dans `bruno`
+
+S'il n'y a plus d'erreur dans le code et que les imports sont bien gérés, on peut dans `bruno` supprimer la requête `Hello World` et créer une nouvelle requête `GET`nommée `Liste des bovins` avec l'url suivante : [http://localhost:3000/api/v1/bovins](http://localhost:3000/api/v1/bovins).
+
+Le résultat doit donner ceci :
+
+```json
+[
+  {
+    "copaip": "FR",
+    "nunati": "2512345678",
+    "nobovi": "Marguerite",
+    "danais": "2019-01-01T00:00:00.000Z",
+    "sexbov": 2,
+    "dcre": "2019-01-02T00:00:00.000Z",
+    "dmaj": "2019-01-02T11:34:56.000Z"
+  },
+  {
+    "copaip": "FR",
+    "nunati": "2598765432",
+    "nobovi": "Gustave",
+    "danais": "2020-01-01T00:00:00.000Z",
+    "sexbov": 1,
+    "dcre": "2020-01-02T00:00:00.000Z",
+    "dmaj": "2020-01-02T11:34:56.000Z"
+  },
+  {
+    "copaip": "FR",
+    "nunati": "2567890123",
+    "nobovi": "Blanchette",
+    "danais": "2021-01-01T00:00:00.000Z",
+    "sexbov": 2,
+    "dcre": "2021-01-02T00:00:00.000Z",
+    "dmaj": "2021-01-02T11:34:56.000Z"
+  }
+]
+```
+
+Syntaxiquement, le résultat est OK.
+
+Par contre, il est inutile de retourner les champs `dcre`et `dmaj`qui ne servent que dans le code et la base de données.
+
+De plus la date de naissance serait plus lisble au format `YYYY-MM-DD`.
+
+Nous allons donc créer un [DTO](https://code-garage.com/blog/a-quoi-servent-les-data-transfer-objects-dto/).
+
+Il faut créer un dossier `tools` dans le dossier `src`. Dans le dossier `src/tools`, il faut créer le fichier `tools.ts`:
+
+```ts
+export class Tools {
+  private constructor() {}
+
+  static dateToStringIso8601(date: Date): string {
+    return date == null
+      ? ''
+      : date.getFullYear() +
+          '-' +
+          (date.getMonth() + 1).toLocaleString('fr-FR', {
+            minimumIntegerDigits: 2,
+          }) +
+          '-' +
+          date.getDate().toLocaleString('fr-FR', {
+            minimumIntegerDigits: 2,
+          });
+  }
+}
+```
+
+Il faut créer un dossier `dto` dans le dossier `src`. Dans le dossier `src/dto`, il faut créer le fichier `bovin.dto.ts` :
+
+```ts
+import { Bovin } from 'src/entity/bovin';
+import { Tools } from 'src/tools/tools';
+
+export class BovinDto {
+  private copaip: string;
+  private nunati: string;
+  private nobovi: string;
+  private danais: string;
+  private sexbov: string;
+
+  static fromEntity(bovin: Bovin): BovinDto {
+    const bovinDto = new BovinDto();
+
+    bovinDto.copaip = bovin.getCopaip();
+    bovinDto.nunati = bovin.getNunati();
+    bovinDto.nobovi = bovin.getNobovi();
+    bovinDto.danais = Tools.dateToStringIso8601(bovin.getDanais());
+    bovinDto.sexbov = bovin.getSexbov().valueOf().toString();
+    return bovinDto;
+  }
+}
+```
+
+Finalement, on va modifier le contrôleur de cette manière :
+
+```ts
+import { Controller, Get } from '@nestjs/common';
+import { BovinService } from './bovin.service';
+import { Bovin } from 'src/entity/bovin';
+import { BovinDto } from 'src/dto/bovin.dto';
+
+@Controller('bovins')
+export class BovinController {
+  constructor(private readonly bovinService: BovinService) {}
+
+  @Get()
+  getBovins(): BovinDto[] {
+    return this.bovinService
+      .getBovins()
+      .map((bovin: Bovin) => BovinDto.fromEntity(bovin));
+  }
+}
+```
+
+En réexécutant la requête dans `bruno`, on obtient désormais :
+
+```json
+[
+  {
+    "copaip": "FR",
+    "nunati": "2512345678",
+    "nobovi": "Marguerite",
+    "danais": "2019-01-01",
+    "sexbov": "2"
+  },
+  {
+    "copaip": "FR",
+    "nunati": "2598765432",
+    "nobovi": "Gustave",
+    "danais": "2020-01-01",
+    "sexbov": "1"
+  },
+  {
+    "copaip": "FR",
+    "nunati": "2567890123",
+    "nobovi": "Blanchette",
+    "danais": "2021-01-01",
+    "sexbov": "2"
+  }
+]
+```
+
+### Ajout d'une route pour récupérer un bovin
+
+Pour récupérer un bovin, il faut renseigner son code pays (copaip) et son numéro national (nunati).
+
+#### Modification du service
+
+Commençons par ajouter la méthode `getBovin` à la classe de service `bovin.service.ts` :
+
+```ts
+...
+
+getBovin(copaip: string, nunati: string): Bovin | undefined {
+  return BovinService.bovins.find(
+    (bovin: Bovin) =>
+      bovin.getCopaip() === copaip && bovin.getNunati() === nunati,
+  );
+}
+```
+
+A noter que le `getBovin`peut retourner soit un bovin soit une valeur non initialisée.
+
+#### Modification du contrôleur
+
+Ajoutons aussi une méthode `getBovin` dans le contrôleur :
+
+```ts
+import { Controller, Get, Param } from '@nestjs/common';
+...
+@Get(':copaip/:nunati')
+getBovin(
+  @Param('copaip') copaip: string,
+  @Param('nunati') nunati: string,
+): BovinDto | undefined {
+  const bovin = this.bovinService.getBovin(copaip, nunati);
+
+  return bovin ? BovinDto.fromEntity(bovin) : undefined;
+}
+```
+
+#### Test dans `bruno``
+
+Ajouter une nouvelle requête `GET`dans `bruno` : [http://localhost:3000/api/v1/bovins/FR/2567890123](http://localhost:3000/api/v1/bovins/FR/2567890123).
+
+L'animal existe, l'API nous retourne donc une réponse avec le code `200`.
+
+Restestons avec la requête suivante : [http://localhost:3000/api/v1/bovins/FR/256789012](http://localhost:3000/api/v1/bovins/FR/256789012).
+
+L'animal n'existe pas, l'API ne nous retourne pas d'animal. C'est parfait !
+
+NON, j'aimerais que l'API me retourne le code HTTP `404` !
+
+`nest.js`permet de gérer les exceptions à travers un `ExceptionFilter`, ce qui est un bonne pratique.
+
+Pour ce tuto, on va faire plus simple pour ne pas trop alourdir l'apprentissage. Modifions la méthode `getBovin` dans le contrôleur :
+
+```ts
+@Get(':copaip/:nunati')
+getBovin(
+  @Param('copaip') copaip: string,
+  @Param('nunati') nunati: string,
+): BovinDto | undefined {
+  const bovin = this.bovinService.getBovin(copaip, nunati);
+
+  if (bovin) {
+    return BovinDto.fromEntity(bovin);
+  }
+  throw new NotFoundException(`Le bovin ${copaip}${nunati} n'existe pas`);
+}
+```
+
+La requête [http://localhost:3000/api/v1/bovins/FR/256789012](http://localhost:3000/api/v1/bovins/FR/256789012) retourne bien une 404 avec un message d'erreur :
+
+```json
+{
+  "message": "Le bovin FR/256789012 n'existe pas",
+  "error": "Not Found",
+  "statusCode": 404
+}
+```
+
+## Quelques optimisations avant la suite

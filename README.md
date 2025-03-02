@@ -651,3 +651,167 @@ La requête [http://localhost:3000/api/v1/bovins/FR/256789012](http://localhost:
 ```
 
 ## Quelques optimisations avant la suite
+
+### Optimisation des entités
+
+#### Création d'une classe abstraite _Entity_
+
+La plupart des entités par la suite (Bovin, Cheptel, ...) vont avoir les attributs `dcre` et `dmaj`.
+
+Afin de répéter le même code, nous allons créer une classe abtraite `Entity` dans le dossier `scr/entity` :
+
+```js
+export abstract class Entity {
+  // Date de création de l'enregistrement
+  private dcre: Date;
+  // Date de mise à jour de l'enregistrement
+  private dmaj: Date;
+
+  constructor(dcre: Date | null = null, dmaj: Date | null = null) {
+    this.init(dcre, dmaj);
+  }
+
+  private init(dcre: Date | null = null, dmaj: Date | null = null): void {
+    this.setDcre(dcre ?? new Date());
+    this.setDmaj(dmaj ?? new Date());
+  }
+
+  getDcre(): Date {
+    return this.dcre;
+  }
+
+  getDmaj(): Date {
+    return this.dmaj;
+  }
+
+  setDcre(dcre: Date): void {
+    this.dcre = dcre;
+  }
+
+  setDmaj(dmaj: Date): void {
+    this.dmaj = dmaj;
+  }
+}
+```
+
+#### Modification de la classe _Bovin_
+
+Nous pouvons modifier la classe de telle manière :
+
+- Mise en place de l'import de l'héritage
+
+  ```ts
+  import { Entity } from './Entity';
+
+  export enum Sexe {
+    M = 1,
+    F = 2,
+  }
+
+  export class Bovin extends Entity {
+  ...
+  ```
+
+- Suppression des membres `dcre` et `dmaj` ;
+
+- Suppression des assesseurs `getDcre`, `getDmaj`, `setDcre` et `setDmaj`;
+
+- Modification du constructeur
+
+  ```ts
+  constructor(
+    copaip: string | null = null,
+    nunati: string | null = null,
+    nobovi: string | null = null,
+    danais: Date | null = null,
+    sexbov: Sexe | null = null,
+    dcre: Date | null = null,
+    dmaj: Date | null = null,
+  ) {
+    super(dcre, dmaj);
+    this.initBovin(copaip, nunati, nobovi, danais, sexbov);
+  }
+  ```
+
+- Modification de la méthode d'initialisation
+  ```ts
+  private initBovin(
+    copaip: string | null = null,
+    nunati: string | null = null,
+    nobovi: string | null = null,
+    danais: Date | null = null,
+    sexbov: Sexe | null = null,
+  ): void {
+    this.setCopaip(copaip ?? '');
+    this.setNunati(nunati ?? '');
+    this.setNobovi(nobovi ?? '');
+    this.setDanais(danais ?? new Date());
+    this.setSexbov(sexbov ?? Sexe.F);
+  }
+  ```
+
+#### Mise en place d'un fichier d'environnement
+
+Par la suite, nous allons nous brancher sur une base de données. Par mesure de sécurité, nous allons externaliser les informations de connexion à la base (url, identifiant, mot de passe, ...).
+
+On va donc créer un fichier d'environnement qu'il ne faudra surtout pas exposer dans les sources versionnées (gitHub ou autre).
+
+A la racine du projet, nous allons créer le fichier `.env`.
+
+Afin de l'exclure du _versionning_, il convient de vérifier que le fichier `.gitignore` est correctement configuré avec la présence des lignes suivantes :
+
+```text
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+```
+
+Dans un premier temps, dans le fichier `.env`, nous allons positionner le port d'écoute du serveur :
+
+```text
+PORT=3333
+```
+
+Dans la console de VSCode, installer le module `@nestjs/config` :
+
+```bash
+npm install @nestjs/config
+```
+
+Modifier le fichier àpp.module.ts`:
+
+```ts
+import { Module } from '@nestjs/common';
+import { BovinModule } from './bovin/bovin.module';
+import { ConfigModule } from '@nestjs/config';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    BovinModule,
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+```
+
+Normalement, le serveur doit maintenant écouter sur le port 3333.
+
+A tester dans `bruno`.
+
+## Mise en place de TypeORM
+
+---
+
+MIT License
+
+Copyright &copy; 2025 gen'IAtest
+
+[https://www.geniatest.com/](https://www.geniatest.com/)

@@ -21,6 +21,8 @@ export class BovinController {
   ): BovinDto | undefined {
     const bovin = this.bovinService.getBovin(copaip, nunati);
 
+    console.log(`Port : ${process.env.PORT}`);
+
     if (bovin) {
       return BovinDto.fromEntity(bovin);
     }

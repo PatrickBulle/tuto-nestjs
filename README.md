@@ -808,6 +808,43 @@ A tester dans `bruno`.
 
 ## Mise en place de TypeORM
 
+### Installer PostgreSQL
+
+Procéder à l'installation du moteur de base de données
+
+### Créer la base de données
+
+Créer une base de données `tutonestjs` :
+
+```sql
+create database tutonestjs;
+```
+
+Créer la table `animal` qui contiendra quelques bovins :
+
+```sql
+create table animal (
+copaip char(2) not null,
+nunati char(10) not null,
+nobovi varchar(10) default '',
+danais date not null,
+sexbov char(1) not null,
+dcre date not null default current_date,
+dmaj timestamp not null default current_timestamp,
+primary key (copaip, nunati)
+)
+```
+
+Alimenter la table avec quelques bovins :
+
+```sql
+insert into animal (copaip, nunati, nobovi, danais, sexbov, dcre, dmaj)
+values
+('FR', '2512345678', 'Marguerite', '2019-01-01', '2', current_date, current_timestamp),
+('FR', '2598765432', 'Gustave',    '2020-01-01', '1', current_date, current_timestamp),
+('FR', '2567890123', 'Blanchette', '2021-01-01', '2', current_date, current_timestamp)
+```
+
 ---
 
 MIT License

@@ -6,7 +6,7 @@ import { BovinRepository } from './bovin.repository';
 export class BovinService {
   constructor(private readonly bovinRepository: BovinRepository) {}
 
-  getBovins(): Bovin[] {
+  getBovins(): Promise<Bovin[]> {
     return this.bovinRepository.findAll();
   }
 

@@ -18,7 +18,7 @@ export class Bovin extends BaseEntity {
   @Column({ name: 'nobovi', nullable: true })
   private nobovi: string;
   // Date de naissance
-  @Column({ name: 'danais', nullable: false, type: 'date' })
+  @Column({ name: 'danais', nullable: false, type: 'timestamptz' })
   private danais: Date;
   // Sexe
   @Column({ name: 'sexbov', nullable: false, type: 'enum', enum: Sexe })

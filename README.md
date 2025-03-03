@@ -6,6 +6,7 @@
 | :--------: | ------: | :--------- | :------------------------ |
 | 28/02/2024 |     0.1 | Patrick B. | Initilisation du document |
 | 02/03/2024 |     0.1 | Patrick B. | Création du projet        |
+| 03/03/2024 |     0.1 | Patrick B. | Mise en place de Type ORM |
 
 ## Pourquoi utiliser ce framework dans le cadre d'un développement back
 
@@ -1013,7 +1014,7 @@ export class Bovin extends BaseEntity {
   @Column({ name: 'nobovi', nullable: true })
   private nobovi: string;
   // Date de naissance
-  @Column({ name: 'danais', nullable: false, type: 'date' })
+  @Column({ name: 'danais', nullable: false, type: 'timestamptz' })
   private danais: Date;
   // Sexe
   @Column({ name: 'sexbov', nullable: false, type: 'enum', enum: Sexe })
@@ -1029,6 +1030,8 @@ export class Bovin extends BaseEntity {
 
 - L'annotation `@Column` permet de déclarer le nom de la colonne s'il est différent de celui du membre, si le champ est nullable et le type de données SQL
 
+- Attention aux colonnes contenant des dates avec `TypeORM` et `PostgreSQL`, il ne faut pas mettre le type `date` mais le type `timestamptz`
+
 Il ne faut pas oublier que la classe `Bovin` hérite de `BaseEntity`. Il convient donc de modifier aussi le fichier `base.entity.ts` :
 
 ```ts
@@ -1036,15 +1039,90 @@ import { Column } from 'typeorm';
 
 export abstract class BaseEntity {
   // Date de création de l'enregistrement
-  @Column({ name: 'dcre', nullable: false, type: 'date' })
+  @Column({ name: 'dcre', nullable: false, type: 'timestamptz' })
   private dcre: Date;
   // Date de mise à jour de l'enregistrement
-  @Column({ name: 'dmaj', nullable: false, type: 'timestamp' })
+  @Column({ name: 'dmaj', nullable: false, type: 'timestamptz' })
   private dmaj: Date;
 ...
 ```
 
-A noter que `BaseEntity` n'est pas une entité. Elle ne sert que de classe de bases à toutes les entités. De fait, on n'ajoute pas le décorateur `@Entity`.
+A noter que `BaseEntity` n'est pas une entité. Elle ne sert que de classe de base à toutes les entités. De fait, on n'ajoute pas le décorateur `@Entity`.
+
+Il faut aussi modifier `bovin.module.ts` pour injecter `TypeORM` en spécifiant l'entité en jeu :
+
+```ts
+import { Module } from '@nestjs/common';
+import { BovinController } from './bovin.controller';
+import { BovinService } from './bovin.service';
+import { BovinRepository } from './bovin.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Bovin } from 'src/entity/bovin.entity';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Bovin])],
+  controllers: [BovinController],
+  providers: [BovinService, BovinRepository],
+})
+export class BovinModule {}
+```
+
+Implémentons réellement le repository `bovin.repository.ts` :
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Bovin, Sexe } from 'src/entity/bovin.entity';
+import { EntityManager, Repository } from 'typeorm';
+
+@Injectable()
+export class BovinRepository {
+  constructor(
+    @InjectRepository(Bovin) private readonly bovinRepo: Repository<Bovin>,
+    private readonly entityManager: EntityManager,
+  ) {}
+
+  findAll(): Promise<Bovin[]> {
+    return this.bovinRepo.find();
+  }
+
+  findById(copaip: string, nunati: string): Bovin | undefined {
+    return undefined;
+  }
+}
+```
+
+L'appel à la méthode `find` de `bovin.Repo` retourne une `promesse`.
+
+Il faut donc changer le type du retour de la méthode.
+
+Il faut impacter en cascade :
+
+- Le service :
+
+  ```ts
+  ...
+  getBovins(): Promise<Bovin[]> {
+  return this.bovinRepository.findAll();
+  }
+  ...
+  ```
+
+- Le contrôleur :
+  ```ts
+  ...
+  @Get()
+  getBovins(): Promise<BovinDto[]> {
+    return this.bovinService
+      .getBovins()
+      .then((bovins: Bovin[]) =>
+        bovins.map((bovin: Bovin) => BovinDto.fromEntity(bovin)),
+      );
+  }
+  ...
+  ```
+
+On doit désormais depuis `bruno` accéder directement aux données stockées dans la table `animal`.
 
 ---
 

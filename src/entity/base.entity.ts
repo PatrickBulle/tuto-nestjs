@@ -2,10 +2,10 @@ import { Column } from 'typeorm';
 
 export abstract class BaseEntity {
   // Date de création de l'enregistrement
-  @Column({ name: 'dcre', nullable: false, type: 'date' })
+  @Column({ name: 'dcre', nullable: false, type: 'timestamptz' })
   private dcre: Date;
   // Date de mise à jour de l'enregistrement
-  @Column({ name: 'dmaj', nullable: false, type: 'timestamp' })
+  @Column({ name: 'dmaj', nullable: false, type: 'timestamptz' })
   private dmaj: Date;
 
   constructor(dcre: Date | null = null, dmaj: Date | null = null) {

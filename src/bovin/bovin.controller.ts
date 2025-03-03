@@ -8,10 +8,12 @@ export class BovinController {
   constructor(private readonly bovinService: BovinService) {}
 
   @Get()
-  getBovins(): BovinDto[] {
+  getBovins(): Promise<BovinDto[]> {
     return this.bovinService
       .getBovins()
-      .map((bovin: Bovin) => BovinDto.fromEntity(bovin));
+      .then((bovins: Bovin[]) =>
+        bovins.map((bovin: Bovin) => BovinDto.fromEntity(bovin)),
+      );
   }
 
   @Get(':copaip/:nunati')

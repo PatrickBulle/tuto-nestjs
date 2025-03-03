@@ -845,6 +845,63 @@ values
 ('FR', '2567890123', 'Blanchette', '2021-01-01', '2', current_date, current_timestamp)
 ```
 
+### Installation de TypeORM
+
+Dans la console de VSCode, taper la commande suivante :
+
+```bash
+npm install --save @nestjs/typeorm typeorm pg
+```
+
+Il faut ensuite créer un module `database` avec la commande suivante dans la console :
+
+```bash
+
+```
+
+Ouvrir le fichier `app.module.ts` à la racine de `src`et le modifier ainsi :
+
+```ts
+nest generate module database
+```
+
+Ouvrir le fichier nouvellement généré `src/database/database.module.ts`et ajouter ceci :
+
+```ts
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: parseInt(configService.get('DB_PORT') || '5432'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_DATABASE'),
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+})
+export class DatabaseModule {}
+```
+
+Il faut ensuite ajouter des entrées dans le fichier `.env`:
+
+```text
+PORT=3000
+
+DB_HOST=<IpDuServeur>
+DB_PORT=5432
+DB_USERNAME=<utilisateur>
+DB_PASSWORD=<motDePasse>
+DB_DATABASE=<nomDeLaBaseDeDonnées>
+```
+
 ---
 
 MIT License

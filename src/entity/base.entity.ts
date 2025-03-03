@@ -1,7 +1,11 @@
-export abstract class Entity {
+import { Column } from 'typeorm';
+
+export abstract class BaseEntity {
   // Date de création de l'enregistrement
+  @Column({ name: 'dcre', nullable: false, type: 'date' })
   private dcre: Date;
   // Date de mise à jour de l'enregistrement
+  @Column({ name: 'dmaj', nullable: false, type: 'timestamp' })
   private dmaj: Date;
 
   constructor(dcre: Date | null = null, dmaj: Date | null = null) {

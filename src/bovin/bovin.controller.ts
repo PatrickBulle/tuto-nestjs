@@ -1,6 +1,6 @@
 import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { BovinService } from './bovin.service';
-import { Bovin } from 'src/entity/bovin';
+import { Bovin } from 'src/entity/bovin.entity';
 import { BovinDto } from 'src/dto/bovin.dto';
 
 @Controller('bovins')

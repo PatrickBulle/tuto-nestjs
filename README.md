@@ -261,7 +261,7 @@ La méthode `getBovins`va retourner un tableau de `Bovin` qui n'existe pas encor
 
 Dans le dossier `src`, créer un sous-dossier `entity`.
 
-Dans le dossier `src/entity`, créer un nouveau fichier `bovin.ts` :
+Dans le dossier `src/entity`, créer un nouveau fichier `bovin.entity.ts` :
 
 ```ts
 export enum Sexe {
@@ -386,7 +386,7 @@ Dans le fichier `bovin.service.ts`, ajouter la méthode `getBovins` :
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { Bovin, Sexe } from 'src/entity/bovin';
+import { Bovin, Sexe } from 'src/entity/bovin.entity';
 
 @Injectable()
 export class BovinService {
@@ -498,7 +498,7 @@ export class Tools {
 Il faut créer un dossier `dto` dans le dossier `src`. Dans le dossier `src/dto`, il faut créer le fichier `bovin.dto.ts` :
 
 ```ts
-import { Bovin } from 'src/entity/bovin';
+import { Bovin } from 'src/entity/bovin.entity';
 import { Tools } from 'src/tools/tools';
 
 export class BovinDto {
@@ -526,7 +526,7 @@ Finalement, on va modifier le contrôleur de cette manière :
 ```ts
 import { Controller, Get } from '@nestjs/common';
 import { BovinService } from './bovin.service';
-import { Bovin } from 'src/entity/bovin';
+import { Bovin } from 'src/entity/bovin.entity';
 import { BovinDto } from 'src/dto/bovin.dto';
 
 @Controller('bovins')
@@ -589,7 +589,7 @@ getBovin(copaip: string, nunati: string): Bovin | undefined {
 }
 ```
 
-A noter que le `getBovin`peut retourner soit un bovin soit une valeur non initialisée.
+A noter que le `getBovin` peut retourner soit un bovin soit une valeur non initialisée.
 
 #### Modification du contrôleur
 
@@ -654,14 +654,14 @@ La requête [http://localhost:3000/api/v1/bovins/FR/256789012](http://localhost:
 
 ### Optimisation des entités
 
-#### Création d'une classe abstraite _Entity_
+#### Création d'une classe abstraite _BaseEntity_
 
 La plupart des entités par la suite (Bovin, Cheptel, ...) vont avoir les attributs `dcre` et `dmaj`.
 
-Afin de répéter le même code, nous allons créer une classe abtraite `Entity` dans le dossier `scr/entity` :
+Afin de ne pas répéter le même code, nous allons créer une classe abtraite `BaseEntity` nommée `base.entity.ts` dans le dossier `scr/entity` :
 
 ```js
-export abstract class Entity {
+export abstract class BaseEntity {
   // Date de création de l'enregistrement
   private dcre: Date;
   // Date de mise à jour de l'enregistrement
@@ -701,14 +701,14 @@ Nous pouvons modifier la classe de telle manière :
 - Mise en place de l'import de l'héritage
 
   ```ts
-  import { Entity } from './Entity';
+  import { BaseEntity } from './base.entity';
 
   export enum Sexe {
     M = 1,
     F = 2,
   }
 
-  export class Bovin extends Entity {
+  export class Bovin extends BaseEntity {
   ...
   ```
 
@@ -856,12 +856,6 @@ npm install --save @nestjs/typeorm typeorm pg
 Il faut ensuite créer un module `database` avec la commande suivante dans la console :
 
 ```bash
-
-```
-
-Ouvrir le fichier `app.module.ts` à la racine de `src`et le modifier ainsi :
-
-```ts
 nest generate module database
 ```
 
@@ -882,6 +876,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
+        autoLoadEntities: true,
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),
@@ -899,8 +895,174 @@ DB_HOST=<IpDuServeur>
 DB_PORT=5432
 DB_USERNAME=<utilisateur>
 DB_PASSWORD=<motDePasse>
-DB_DATABASE=<nomDeLaBaseDeDonnées>
+DB_DATABASE=tutonestjs
 ```
+
+### Création d'un repository
+
+Les classes de repositories seront les classes qui sont chargées d'effectuer les échanges avec les sources de données (que ce soit une base de données ou un web service Rest).
+
+Créer le fichier `bovin.repository.ts` dans le dossier `src/bovin`.
+
+Pour vérifier danss un premier temps que l'injection de dépendances fonctionne, nous allons continuer à travailler avec des données statiques :
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { Bovin, Sexe } from 'src/entity/bovin.entity';
+
+@Injectable()
+export class BovinRepository {
+  // Liste de bovins créée en dur
+  private static readonly bovins: Bovin[] = [
+    new Bovin(
+      'FR',
+      '2512345678',
+      'Marguerite',
+      new Date('2019-01-01'),
+      Sexe.F,
+      new Date('2019-01-02'),
+      new Date('2019-01-02T12:34:56'),
+    ),
+    new Bovin(
+      'FR',
+      '2598765432',
+      'Gustave',
+      new Date('2020-01-01'),
+      Sexe.M,
+      new Date('2020-01-02'),
+      new Date('2020-01-02T12:34:56'),
+    ),
+    new Bovin(
+      'FR',
+      '2567890123',
+      'Blanchette',
+      new Date('2021-01-01'),
+      Sexe.F,
+      new Date('2021-01-02'),
+      new Date('2021-01-02T12:34:56'),
+    ),
+  ];
+
+  findAll(): Bovin[] {
+    return BovinRepository.bovins;
+  }
+
+  findById(copaip: string, nunati: string): Bovin | undefined {
+    return BovinRepository.bovins.find(
+      (bovin: Bovin) =>
+        bovin.getCopaip() === copaip && bovin.getNunati() === nunati,
+    );
+  }
+}
+```
+
+Il faut ensuite modifier le fichier `bovin.service.ts` pour qu'il accède au repository :
+
+- Plus besoin de stocker ici en dur des données factices ;
+- Noter l'import de BovinRepository ;
+- Noter l'injection de dépendance par le constructeur ;
+- Les méthodes `getBovins` et `getBovin` font appel au repository désormais.
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { Bovin, Sexe } from 'src/entity/bovin';
+import { BovinRepository } from './bovin.repository';
+
+@Injectable()
+export class BovinService {
+  constructor(private readonly bovinRepository: BovinRepository) {}
+
+  getBovins(): Bovin[] {
+    return this.bovinRepository.findAll();
+  }
+
+  getBovin(copaip: string, nunati: string): Bovin | undefined {
+    return this.bovinRepository.findById(copaip, nunati);
+  }
+}
+```
+
+Pour finaliser l'injection de dépendances, il faut modifier le fichier `bovin.module.ts` en ajoutant `BovinRepository` à la liste des providers :
+
+```ts
+...
+providers: [BovinService, BovinRepository],
+...
+```
+
+A ce point, on peut dans `bruno` vérifier que les requêtes fonctionnent toujours.
+
+### Implémentation réelle du repository
+
+#### Modification de l'entity _bovin_
+
+Il faut transformer le fichier `bovin.entity.ts` :
+
+```ts
+import { Column, Entity, PrimaryColumn } from 'typeorm';
+...
+@Entity({ name: 'animal' })
+export class Bovin extends BaseEntity {
+  // Code pays
+  @PrimaryColumn({ name: 'copaip', nullable: false })
+  private copaip: string;
+  // Numéro national
+  @PrimaryColumn({ name: 'nunati', nullable: false })
+  private nunati: string;
+  // Nom
+  @Column({ name: 'nobovi', nullable: true })
+  private nobovi: string;
+  // Date de naissance
+  @Column({ name: 'danais', nullable: false, type: 'date' })
+  private danais: Date;
+  // Sexe
+  @Column({ name: 'sexbov', nullable: false, type: 'enum', enum: Sexe })
+  private sexbov: Sexe;
+...
+```
+
+- L'annotation `@Entity` permet de définir que la classe est une entité au regard de `TypeORM`.
+
+  Par défaut, le nom de la table est identique au nom de la classe. Si ce n'est pas le cas, on peut préciser dans l'annotation le nom de la table.
+
+- L'annotation `@PrimaryColumn` permet de déclarer la ou les colonnes faisant partie de la clé primaire
+
+- L'annotation `@Column` permet de déclarer le nom de la colonne s'il est différent de celui du membre, si le champ est nullable et le type de données SQL
+
+Il ne faut pas oublier que la classe `Bovin` hérite de `BaseEntity`. Il convient donc de modifier aussi le fichier `base.entity.ts` :
+
+```ts
+import { Column } from 'typeorm';
+
+export abstract class BaseEntity {
+  // Date de création de l'enregistrement
+  @Column({ name: 'dcre', nullable: false, type: 'date' })
+  private dcre: Date;
+  // Date de mise à jour de l'enregistrement
+  @Column({ name: 'dmaj', nullable: false, type: 'timestamp' })
+  private dmaj: Date;
+...
+```
+
+A noter que `BaseEntity` n'est pas une entité. Elle ne sert que de classe de bases à toutes les entités. De fait, on n'ajoute pas le décorateur `@Entity`.
+
+---
+
+## Sitographie :
+
+- [Documentation | NestJS](https://docs.nestjs.com/)
+- [TypeORM - Amazing ORM for TypeScript and JavaScript](https://typeorm.io/)
+- [NestJS + TypeORM Tutorial | Repositories, Relations, Migrations & More](https://www.youtube.com/watch?v=9MGKKJTwicM)
+- [Développe ton premier projet fullstack avec NestJS, Typescript, Remix, Docker Formation NestJS 2024](https://www.youtube.com/watch?v=tJt2MoT_BpU)
+
+---
+
+## A voir :
+
+- Authentification SSO
+- Déploiement dans Docker
+- Lien avec agenda Outlook
+- Framework d'optimisation de tournées
 
 ---
 

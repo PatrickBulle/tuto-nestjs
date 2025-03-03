@@ -1,20 +1,27 @@
-import { Entity } from './Entity';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 export enum Sexe {
   M = 1,
   F = 2,
 }
 
-export class Bovin extends Entity {
+@Entity({ name: 'animal' })
+export class Bovin extends BaseEntity {
   // Code pays
+  @PrimaryColumn({ name: 'copaip', nullable: false })
   private copaip: string;
   // Numéro national
+  @PrimaryColumn({ name: 'nunati', nullable: false })
   private nunati: string;
   // Nom
+  @Column({ name: 'nobovi', nullable: true })
   private nobovi: string;
   // Date de naissance
+  @Column({ name: 'danais', nullable: false, type: 'date' })
   private danais: Date;
   // Sexe
+  @Column({ name: 'sexbov', nullable: false, type: 'enum', enum: Sexe })
   private sexbov: Sexe;
 
   constructor(

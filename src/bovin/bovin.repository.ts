@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Bovin, Sexe } from 'src/entity/bovin.entity';
+import { Bovin } from 'src/entity/bovin.entity';
 import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
@@ -10,11 +10,16 @@ export class BovinRepository {
     private readonly entityManager: EntityManager,
   ) {}
 
-  findAll(): Promise<Bovin[]> {
-    return this.bovinRepo.find();
+  async findAll(): Promise<Bovin[]> {
+    const bovins = await this.bovinRepo.find();
+
+    return bovins;
   }
 
-  findById(copaip: string, nunati: string): Bovin | undefined {
-    return undefined;
+  async findById(p_copaip: string, p_nunati: string): Promise<Bovin | null> {
+    const bovin = await this.bovinRepo.findOne({
+      where: { copaip: p_copaip, nunati: p_nunati },
+    });
+    return bovin;
   }
 }

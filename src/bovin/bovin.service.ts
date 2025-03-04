@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Bovin, Sexe } from 'src/entity/bovin.entity';
+import { Bovin } from 'src/entity/bovin.entity';
 import { BovinRepository } from './bovin.repository';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class BovinService {
     return this.bovinRepository.findAll();
   }
 
-  getBovin(copaip: string, nunati: string): Bovin | undefined {
+  getBovin(copaip: string, nunati: string): Promise<Bovin | null> {
     return this.bovinRepository.findById(copaip, nunati);
   }
 }

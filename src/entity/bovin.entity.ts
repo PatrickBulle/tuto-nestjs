@@ -10,10 +10,10 @@ export enum Sexe {
 export class Bovin extends BaseEntity {
   // Code pays
   @PrimaryColumn({ name: 'copaip', nullable: false })
-  private copaip: string;
+  copaip: string;
   // Numéro national
   @PrimaryColumn({ name: 'nunati', nullable: false })
-  private nunati: string;
+  nunati: string;
   // Nom
   @Column({ name: 'nobovi', nullable: true })
   private nobovi: string;

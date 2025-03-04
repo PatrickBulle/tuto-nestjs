@@ -8,22 +8,18 @@ export class BovinController {
   constructor(private readonly bovinService: BovinService) {}
 
   @Get()
-  getBovins(): Promise<BovinDto[]> {
-    return this.bovinService
-      .getBovins()
-      .then((bovins: Bovin[]) =>
-        bovins.map((bovin: Bovin) => BovinDto.fromEntity(bovin)),
-      );
+  async getBovins(): Promise<BovinDto[]> {
+    const bovins = await this.bovinService.getBovins();
+
+    return bovins.map((bovin: Bovin) => BovinDto.fromEntity(bovin));
   }
 
   @Get(':copaip/:nunati')
-  getBovin(
+  async getBovin(
     @Param('copaip') copaip: string,
     @Param('nunati') nunati: string,
-  ): BovinDto | undefined {
-    const bovin = this.bovinService.getBovin(copaip, nunati);
-
-    console.log(`Port : ${process.env.PORT}`);
+  ): Promise<BovinDto> {
+    const bovin = await this.bovinService.getBovin(copaip, nunati);
 
     if (bovin) {
       return BovinDto.fromEntity(bovin);

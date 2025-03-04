@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Bovin } from 'src/entity/bovin.entity';
 import { BovinRepository } from './bovin.repository';
+import { Bovin } from 'src/models/bovin.model';
 
 @Injectable()
 export class BovinService {

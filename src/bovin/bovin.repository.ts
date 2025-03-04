@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Bovin } from 'src/entity/bovin.entity';
+import { BovinEntity } from 'src/entity/bovin.entity';
 import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class BovinRepository {
   constructor(
-    @InjectRepository(Bovin) private readonly bovinRepo: Repository<Bovin>,
+    @InjectRepository(BovinEntity)
+    private readonly bovinRepo: Repository<BovinEntity>,
     private readonly entityManager: EntityManager,
   ) {}
 

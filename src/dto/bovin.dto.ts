@@ -1,4 +1,4 @@
-import { Bovin } from 'src/entity/bovin.entity';
+import { Bovin } from 'src/models/bovin.model';
 import { Tools } from 'src/tools/tools';
 
 export class BovinDto {

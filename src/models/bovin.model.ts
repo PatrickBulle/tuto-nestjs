@@ -1,3 +1,4 @@
+import { BovinEntity } from 'src/entity/bovin.entity';
 import { BaseModel } from './base.model';
 
 export enum Sexe {
@@ -7,9 +8,9 @@ export enum Sexe {
 
 export class Bovin extends BaseModel {
   // Code pays
-  copaip: string;
+  private copaip: string;
   // Numéro national
-  nunati: string;
+  private nunati: string;
   // Nom
   private nobovi: string;
   // Date de naissance
@@ -87,5 +88,30 @@ export class Bovin extends BaseModel {
 
   setSexbov(sexbov: Sexe): void {
     this.sexbov = sexbov;
+  }
+
+  static toEntity(Bovin: Bovin): BovinEntity {
+    const entity = new BovinEntity();
+
+    entity.copaip = Bovin.getCopaip();
+    entity.nunati = Bovin.getNunati();
+    entity.nobovi = Bovin.getNobovi();
+    entity.danais = Bovin.getDanais();
+    entity.sexbov = Bovin.getSexbov().valueOf().toString();
+    entity.dcre = Bovin.getDcre();
+    entity.dmaj = Bovin.getDmaj();
+    return entity;
+  }
+
+  static fromEntity(entity: BovinEntity): Bovin {
+    return new Bovin(
+      entity.copaip,
+      entity.nunati,
+      entity.nobovi,
+      entity.danais,
+      Sexe[entity.sexbov as keyof typeof Sexe],
+      entity.dcre,
+      entity.dmaj,
+    );
   }
 }

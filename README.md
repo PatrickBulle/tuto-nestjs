@@ -2,11 +2,12 @@
 
 ## Version
 
-|    Date    | Version | Auteur     | Commentaire               |
-| :--------: | ------: | :--------- | :------------------------ |
-| 28/02/2024 |     0.1 | Patrick B. | Initilisation du document |
-| 02/03/2024 |     0.1 | Patrick B. | Création du projet        |
-| 03/03/2024 |     0.1 | Patrick B. | Mise en place de Type ORM |
+|    Date    | Version | Auteur     | Commentaire                              |
+| :--------: | ------: | :--------- | :--------------------------------------- |
+| 28/02/2025 |     0.1 | Patrick B. | Initilisation du document                |
+| 02/03/2025 |     0.1 | Patrick B. | Création du projet                       |
+| 03/03/2025 |     0.1 | Patrick B. | Mise en place de Type ORM                |
+| 05/03/2025 |     0.1 | Patrick B. | Poursuite de la mise en place de TypeORM |
 
 ## Pourquoi utiliser ce framework dans le cadre d'un développement back
 
@@ -997,30 +998,224 @@ A ce point, on peut dans `bruno` vérifier que les requêtes fonctionnent toujou
 
 #### Modification de l'entity _bovin_
 
-Il faut transformer le fichier `bovin.entity.ts` :
+**Tout d'abord, nous allons tomber sur un écueil : le framework `TypeORM` ne permet pas de manipuler des entités avec des membres privés.**
 
-```ts
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-...
-@Entity({ name: 'animal' })
-export class Bovin extends BaseEntity {
-  // Code pays
-  @PrimaryColumn({ name: 'copaip', nullable: false })
-  private copaip: string;
-  // Numéro national
-  @PrimaryColumn({ name: 'nunati', nullable: false })
-  private nunati: string;
-  // Nom
-  @Column({ name: 'nobovi', nullable: true })
-  private nobovi: string;
-  // Date de naissance
-  @Column({ name: 'danais', nullable: false, type: 'timestamptz' })
-  private danais: Date;
-  // Sexe
-  @Column({ name: 'sexbov', nullable: false, type: 'enum', enum: Sexe })
-  private sexbov: Sexe;
-...
-```
+**Or, dans le cadre de la mise en place d'une progrmmation déffensive, il est opportun de mettre en place des sécurités dans notre code. Un exemple déjà codé est d'interdire une date de naissance postérieure à la date du jour. Et cela passe inévitablement par l'assesseur set...**
+
+**On va donc faire la distinction entre les entités (manipulées par la base de données) et les models (manipulés par le code métier présent dans les services).**
+
+- Il faut créer le dossier `src/models` et ensuite copier les fichiers `base.entity.ts` et `bovin.entity.ts`.
+
+  Renommer le fichier `src/models/base.entity.ts` en `src/models/base.model.ts`
+
+  Renommer la classe en `BaseModel` dans `src/models/base.model.ts`
+
+  Elle doit ressembler à ceci :
+
+  ```ts
+  export abstract class BaseModel {
+    // Date de création de l'enregistrement
+    private dcre: Date;
+    // Date de mise à jour de l'enregistrement
+    private dmaj: Date;
+
+    constructor(dcre: Date | null = null, dmaj: Date | null = null) {
+      this.init(dcre, dmaj);
+    }
+
+    private init(dcre: Date | null = null, dmaj: Date | null = null): void {
+      this.setDcre(dcre ?? new Date());
+      this.setDmaj(dmaj ?? new Date());
+    }
+
+    getDcre(): Date {
+      return this.dcre;
+    }
+
+    getDmaj(): Date {
+      return this.dmaj;
+    }
+
+    setDcre(dcre: Date): void {
+      this.dcre = dcre;
+    }
+
+    setDmaj(dmaj: Date): void {
+      this.dmaj = dmaj;
+    }
+  }
+  ```
+
+  Renommer le fichier `src/models/bovin.entity.ts` en `src/models/bovin.model.ts`
+
+  Renommer la classe en `BovinModel` dans `src/models/bovin.model.ts`
+
+  Elle doit ressembler à ceci (attention aux imports et à l'héritage):
+
+  ```ts
+  import { BovinEntity } from 'src/entity/bovin.entity';
+  import { BaseModel } from './base.model';
+
+  export enum Sexe {
+    M = 1,
+    F = 2,
+  }
+
+  export class Bovin extends BaseModel {
+    // Code pays
+    private copaip: string;
+    // Numéro national
+    private nunati: string;
+    // Nom
+    private nobovi: string;
+    // Date de naissance
+    private danais: Date;
+    // Sexe
+    private sexbov: Sexe;
+
+    constructor(
+      copaip: string | null = null,
+      nunati: string | null = null,
+      nobovi: string | null = null,
+      danais: Date | null = null,
+      sexbov: Sexe | null = null,
+      dcre: Date | null = null,
+      dmaj: Date | null = null,
+    ) {
+      super(dcre, dmaj);
+      this.initBovin(copaip, nunati, nobovi, danais, sexbov);
+    }
+
+    private initBovin(
+      copaip: string | null = null,
+      nunati: string | null = null,
+      nobovi: string | null = null,
+      danais: Date | null = null,
+      sexbov: Sexe | null = null,
+    ): void {
+      this.setCopaip(copaip ?? '');
+      this.setNunati(nunati ?? '');
+      this.setNobovi(nobovi ?? '');
+      this.setDanais(danais ?? new Date());
+      this.setSexbov(sexbov ?? Sexe.F);
+    }
+
+    getCopaip(): string {
+      return this.copaip;
+    }
+
+    getNunati(): string {
+      return this.nunati;
+    }
+
+    getNobovi(): string {
+      return this.nobovi;
+    }
+
+    getDanais(): Date {
+      return this.danais;
+    }
+
+    getSexbov(): Sexe {
+      return this.sexbov;
+    }
+
+    setCopaip(copaip: string): void {
+      this.copaip = copaip;
+    }
+
+    setNunati(nunati: string): void {
+      this.nunati = nunati;
+    }
+
+    setNobovi(nobovi: string): void {
+      this.nobovi = nobovi;
+    }
+
+    setDanais(danais: Date): void {
+      if (danais > new Date()) {
+        throw new Error(
+          'La date de naissance ne peut pas être supérieure à la date du jour',
+        );
+      }
+      this.danais = danais;
+    }
+
+    setSexbov(sexbov: Sexe): void {
+      this.sexbov = sexbov;
+    }
+
+    static toEntity(Bovin: Bovin): BovinEntity {
+      const entity = new BovinEntity();
+
+      entity.copaip = Bovin.getCopaip();
+      entity.nunati = Bovin.getNunati();
+      entity.nobovi = Bovin.getNobovi();
+      entity.danais = Bovin.getDanais();
+      entity.sexbov = Bovin.getSexbov().valueOf().toString();
+      entity.dcre = Bovin.getDcre();
+      entity.dmaj = Bovin.getDmaj();
+      return entity;
+    }
+
+    static fromEntity(entity: BovinEntity): Bovin {
+      return new Bovin(
+        entity.copaip,
+        entity.nunati,
+        entity.nobovi,
+        entity.danais,
+        Sexe[entity.sexbov as keyof typeof Sexe],
+        entity.dcre,
+        entity.dmaj,
+      );
+    }
+  }
+  ```
+
+- Il faut ensuite modifier le code des fichiers `src/entity/base.entity.ts` et `src/entity/bovin.entity.ts` :
+
+  `src/entity/base.entity.ts` :
+
+  ```ts
+  import { Column } from 'typeorm';
+
+  export abstract class BaseEntity {
+    // Date de création de l'enregistrement
+    @Column({ name: 'dcre', nullable: false, type: 'timestamptz' })
+    dcre: Date;
+    // Date de mise à jour de l'enregistrement
+    @Column({ name: 'dmaj', nullable: false, type: 'timestamptz' })
+    dmaj: Date;
+  }
+  ```
+
+  `src/entity/bovin.entity.ts` :
+
+  ```ts
+  import { Column, Entity, PrimaryColumn } from 'typeorm';
+  import { BaseEntity } from './base.entity';
+
+  @Entity({ name: 'animal' })
+  export class BovinEntity extends BaseEntity {
+    // Code pays
+    @PrimaryColumn({ name: 'copaip', nullable: false })
+    copaip: string;
+    // Numéro national
+    @PrimaryColumn({ name: 'nunati', nullable: false })
+    nunati: string;
+    // Nom
+    @Column({ name: 'nobovi', nullable: true })
+    nobovi: string;
+    // Date de naissance
+    @Column({ name: 'danais', nullable: false, type: 'timestamptz' })
+    danais: Date;
+    // Sexe
+    @Column({ name: 'sexbov', nullable: false })
+    sexbov: string;
+  }
+  ```
+
+- Notez que les membres ne sont plus privés et que nous n'avons pas besoin de par le fait des getters/setters.
 
 - L'annotation `@Entity` permet de définir que la classe est une entité au regard de `TypeORM`.
 
@@ -1032,22 +1227,7 @@ export class Bovin extends BaseEntity {
 
 - Attention aux colonnes contenant des dates avec `TypeORM` et `PostgreSQL`, il ne faut pas mettre le type `date` mais le type `timestamptz`
 
-Il ne faut pas oublier que la classe `Bovin` hérite de `BaseEntity`. Il convient donc de modifier aussi le fichier `base.entity.ts` :
-
-```ts
-import { Column } from 'typeorm';
-
-export abstract class BaseEntity {
-  // Date de création de l'enregistrement
-  @Column({ name: 'dcre', nullable: false, type: 'timestamptz' })
-  private dcre: Date;
-  // Date de mise à jour de l'enregistrement
-  @Column({ name: 'dmaj', nullable: false, type: 'timestamptz' })
-  private dmaj: Date;
-...
-```
-
-A noter que `BaseEntity` n'est pas une entité. Elle ne sert que de classe de base à toutes les entités. De fait, on n'ajoute pas le décorateur `@Entity`.
+- A noter que `BaseEntity` n'est pas une entité. Elle ne sert que de classe de base à toutes les entités. De fait, on n'ajoute pas le décorateur `@Entity`.
 
 Il faut aussi modifier `bovin.module.ts` pour injecter `TypeORM` en spécifiant l'entité en jeu :
 
@@ -1057,10 +1237,10 @@ import { BovinController } from './bovin.controller';
 import { BovinService } from './bovin.service';
 import { BovinRepository } from './bovin.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Bovin } from 'src/entity/bovin.entity';
+import { BovinEntity } from 'src/entity/bovin.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Bovin])],
+  imports: [TypeOrmModule.forFeature([BovinEntity])],
   controllers: [BovinController],
   providers: [BovinService, BovinRepository],
 })
@@ -1072,29 +1252,36 @@ Implémentons réellement le repository `bovin.repository.ts` :
 ```ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Bovin, Sexe } from 'src/entity/bovin.entity';
+import { BovinEntity } from 'src/entity/bovin.entity';
+import { Bovin } from 'src/models/bovin.model';
 import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class BovinRepository {
   constructor(
-    @InjectRepository(Bovin) private readonly bovinRepo: Repository<Bovin>,
+    @InjectRepository(BovinEntity)
+    private readonly bovinRepo: Repository<BovinEntity>,
     private readonly entityManager: EntityManager,
   ) {}
 
-  findAll(): Promise<Bovin[]> {
-    return this.bovinRepo.find();
+  async findAll(): Promise<Bovin[]> {
+    const bovins = await this.bovinRepo.find();
+
+    return bovins.map((bovin) => {
+      return Bovin.fromEntity(bovin);
+    });
   }
 
-  findById(copaip: string, nunati: string): Bovin | undefined {
-    return undefined;
+  async findById(p_copaip: string, p_nunati: string): Promise<Bovin | null> {
+    const bovin = await this.bovinRepo.findOne({
+      where: { copaip: p_copaip, nunati: p_nunati },
+    });
+    return bovin ? Bovin.fromEntity(bovin) : null;
   }
 }
 ```
 
-L'appel à la méthode `find` de `bovin.Repo` retourne une `promesse`.
-
-Il faut donc changer le type du retour de la méthode.
+Les méthodes `find` et `findOne` de `bovin.Repo` retournent une `promesse`.
 
 Il faut impacter en cascade :
 
@@ -1103,21 +1290,37 @@ Il faut impacter en cascade :
   ```ts
   ...
   getBovins(): Promise<Bovin[]> {
-  return this.bovinRepository.findAll();
+    return this.bovinRepository.findAll();
+  }
+
+  getBovin(copaip: string, nunati: string): Promise<Bovin | null> {
+    return this.bovinRepository.findById(copaip, nunati);
   }
   ...
   ```
 
 - Le contrôleur :
+
   ```ts
   ...
   @Get()
-  getBovins(): Promise<BovinDto[]> {
-    return this.bovinService
-      .getBovins()
-      .then((bovins: Bovin[]) =>
-        bovins.map((bovin: Bovin) => BovinDto.fromEntity(bovin)),
-      );
+  async getBovins(): Promise<BovinDto[]> {
+    const bovins = await this.bovinService.getBovins();
+
+    return bovins.map((bovin: Bovin) => BovinDto.fromEntity(bovin));
+  }
+
+  @Get(':copaip/:nunati')
+  async getBovin(
+    @Param('copaip') copaip: string,
+    @Param('nunati') nunati: string,
+  ): Promise<BovinDto> {
+    const bovin = await this.bovinService.getBovin(copaip, nunati);
+
+    if (bovin) {
+      return BovinDto.fromEntity(bovin);
+    }
+    throw new NotFoundException(`Le bovin ${copaip}${nunati} n'existe pas`);
   }
   ...
   ```
@@ -1132,6 +1335,8 @@ On doit désormais depuis `bruno` accéder directement aux données stockées da
 - [TypeORM - Amazing ORM for TypeScript and JavaScript](https://typeorm.io/)
 - [NestJS + TypeORM Tutorial | Repositories, Relations, Migrations & More](https://www.youtube.com/watch?v=9MGKKJTwicM)
 - [Développe ton premier projet fullstack avec NestJS, Typescript, Remix, Docker Formation NestJS 2024](https://www.youtube.com/watch?v=tJt2MoT_BpU)
+- [Quel framework JS backend choisir ?](https://www.youtube.com/watch?v=Q_oVDDevPw8)
+- [Programmation défensive](https://en.wikipedia.org/wiki/Defensive_programming)
 
 ---
 

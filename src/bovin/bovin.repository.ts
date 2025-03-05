@@ -15,7 +15,7 @@ export class BovinRepository {
   async findAll(): Promise<Bovin[]> {
     const bovins = await this.bovinRepo.find();
 
-    return bovins.forEach((bovin) => {
+    return bovins.map((bovin) => {
       return Bovin.fromEntity(bovin);
     });
   }
